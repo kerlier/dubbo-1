@@ -36,7 +36,13 @@ public class InvocationUtil {
     private static final Logger logger = LoggerFactory.getLogger(InvokerInvocationHandler.class);
 
     public static Object invoke(Invoker<?> invoker, RpcInvocation rpcInvocation) throws Throwable {
+        //YTODO 调用方获取invoker中的url:  consumer://192.168.10.140/
+        // org.apache.dubbo.demo.DemoService?application=dubbo-demo-api-consumer&background=false&
+        // check=false&dubbo=2.0.2&injvm=false&interface=org.apache.dubbo.demo.DemoService&methods=sayHello
+        // ,sayHelloAsync&pid=20736&register.ip=192.168.10.140&release=&side=consumer&sticky=false&timestamp=1648728629892
         URL url = invoker.getUrl();
+        System.out.println("调用方执行url: " + url);
+        System.out.println("invoker类型: "+ invoker.getClass());
         String serviceKey = url.getServiceKey();
         rpcInvocation.setTargetServiceUniqueName(serviceKey);
 

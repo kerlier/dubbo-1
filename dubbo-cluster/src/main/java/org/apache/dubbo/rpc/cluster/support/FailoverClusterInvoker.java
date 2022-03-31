@@ -58,6 +58,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
         List<Invoker<T>> copyInvokers = invokers;
         checkInvokers(copyInvokers, invocation);
         String methodName = RpcUtils.getMethodName(invocation);
+        //YTODO 获取配置中的超时时间
         int len = calculateInvokeTimes(methodName);
         // retry loop.
         RpcException le = null; // last exception.
@@ -72,7 +73,9 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
                 // check again
                 checkInvokers(copyInvokers, invocation);
             }
+            //YTODO clusterInvoker根据负载均衡来选择一个invoker
             Invoker<T> invoker = select(loadbalance, invocation, copyInvokers, invoked);
+            //YTODO 已经选择过的invoker,下次select时不要选
             invoked.add(invoker);
             RpcContext.getServiceContext().setInvokers((List) invoked);
             boolean success = false;
@@ -89,6 +92,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
                             + " using the dubbo version " + Version.getVersion() + ". Last error is: "
                             + le.getMessage(), le);
                 }
+                //YTODO  如果成功，就return 结果
                 success = true;
                 return result;
             } catch (RpcException e) {

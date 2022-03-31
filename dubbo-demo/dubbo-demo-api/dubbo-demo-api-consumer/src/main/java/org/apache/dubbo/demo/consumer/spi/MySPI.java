@@ -10,9 +10,10 @@ import org.apache.dubbo.common.extension.SPI;
  * @ClassName MySPI.java
  * @createTime 2022年03月31日 16:56:00
  */
-@SPI
+//YTODO 这里指定value指定默认的SPI实现
+@SPI(value = "A")
 public interface MySPI {
 
-    @Adaptive
+    @Adaptive({"A"})
     void sayHello(URL url);
 }

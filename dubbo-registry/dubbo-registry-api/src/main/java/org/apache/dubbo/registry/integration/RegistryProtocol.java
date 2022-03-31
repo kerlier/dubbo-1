@@ -469,6 +469,7 @@ public class RegistryProtocol implements Protocol, ScopeModelAware {
     @SuppressWarnings("unchecked")
     public <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException {
         url = getRegistryUrl(url);
+        //YTODO url: 提供者对应的注册中心地址
         Registry registry = getRegistry(url);
         if (RegistryService.class.equals(type)) {
             return proxyFactory.getInvoker((T) registry, type, url);
@@ -483,6 +484,7 @@ public class RegistryProtocol implements Protocol, ScopeModelAware {
             }
         }
 
+        //YTODO registryProtocol 默认使用failover作为clusteInvoker执行器, 也就是生成集群执行器
         Cluster cluster = Cluster.getCluster(url.getScopeModel(), qs.get(CLUSTER_KEY));
         return doRefer(cluster, registry, type, url, qs);
     }
@@ -531,6 +533,7 @@ public class RegistryProtocol implements Protocol, ScopeModelAware {
             return invoker;
         }
 
+        //YTODO 判断监听器是否存在，有的话，对invoker执行监听器的操作
         for (RegistryProtocolListener listener : listeners) {
             listener.onRefer(this, invoker, consumerUrl, url);
         }

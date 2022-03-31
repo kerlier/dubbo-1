@@ -1,0 +1,2 @@
+a=org.apache.dubbo.demo.consumer.spi.MyInnerAURLSPI
+b=org.apache.dubbo.demo.consumer.spi.MyInnerBURLSPI

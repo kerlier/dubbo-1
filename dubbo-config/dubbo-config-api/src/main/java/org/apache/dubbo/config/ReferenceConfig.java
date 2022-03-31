@@ -468,6 +468,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
      * Get URLs from the registry and aggregate them.
      */
     private void aggregateUrlFromRegistry(Map<String, String> referenceParameters) {
+        //YTODO 检查注册中心是否可用
         checkRegistry();
         List<URL> us = ConfigValidationUtils.loadRegistries(this, false);
         if (CollectionUtils.isNotEmpty(us)) {
@@ -501,10 +502,20 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
             //YTODO 7. 根据协议的SPI获取invoker
             System.out.println(curUrl.getProtocol());
             System.out.println(curUrl.getScopeModel());
+            System.out.println(protocolSPI.getClass());
+            System.out.println("curUrl:" + curUrl);
+            //YTODO 8. 根据默认的协议，去指定的注册url,加载invoker
             invoker = protocolSPI.refer(interfaceClass, curUrl);
+            System.out.println("invoker: " + invoker.getClass());
+
+            //YTODO 判断当前是否注册中心协议: 注册中心协议以registry开头， 本地以injvm协议开头
+
             if (!UrlUtils.isRegistry(curUrl)) {
                 List<Invoker<?>> invokers = new ArrayList<>();
                 invokers.add(invoker);
+                //YTODO 默认是failOver，失败会重试
+                //YTODO 这里如果不是注册中心协议，那么使用静态目录保存所有的invoker
+                //YTODO 这里返回的是migrationInvoker, migrationInvoker里面有一个clusterInvoker，默认是failoverClusterInvoker
                 invoker = Cluster.getCluster(scopeModel, Cluster.DEFAULT).join(new StaticDirectory(curUrl, invokers), true);
             }
         } else {
@@ -528,7 +539,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
                 String cluster = registryUrl.getParameter(CLUSTER_KEY, ZoneAwareCluster.NAME);
                 // The invoker wrap sequence would be: ZoneAwareClusterInvoker(StaticDirectory) -> FailoverClusterInvoker
                 // (RegistryDirectory, routing happens here) -> Invoker
-                //YTODO 将invoker加入到集群
+                //YTODO 将invoker加入到集群,
                 invoker = Cluster.getCluster(registryUrl.getScopeModel(), cluster, false)
                     .join(new StaticDirectory(registryUrl, invokers), false);
             } else {
@@ -538,7 +549,9 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
                 }
                 URL curUrl = invokers.get(0).getUrl();
                 String cluster = curUrl.getParameter(CLUSTER_KEY, Cluster.DEFAULT);
-                invoker = Cluster.getCluster(scopeModel, cluster).join(new StaticDirectory(curUrl, invokers), true);
+                invoker = Cluster.getCluster(scopeModel, cluster)
+                    //YTODO 都是静态目录
+                    .join(new StaticDirectory(curUrl, invokers), true);
             }
         }
     }

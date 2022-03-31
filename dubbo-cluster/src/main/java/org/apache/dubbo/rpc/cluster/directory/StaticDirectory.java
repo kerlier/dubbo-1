@@ -31,6 +31,7 @@ import java.util.List;
 /**
  * StaticDirectory
  */
+//YTODO staticDirectory: 静态目录服务， 它所有的invoker通过构造函数传入
 public class StaticDirectory<T> extends AbstractDirectory<T> {
     private static final Logger logger = LoggerFactory.getLogger(StaticDirectory.class);
 

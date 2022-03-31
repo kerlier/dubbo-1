@@ -192,6 +192,7 @@ public class ConfigValidationUtils {
         // check && override if necessary
         List<URL> registryList = new ArrayList<>();
         ApplicationConfig application = interfaceConfig.getApplication();
+        // YTODO 获取注册中心的地址信息
         List<RegistryConfig> registries = interfaceConfig.getRegistries();
         if (CollectionUtils.isNotEmpty(registries)) {
             for (RegistryConfig config : registries) {
@@ -199,8 +200,10 @@ public class ConfigValidationUtils {
                 if (!config.isRefreshed()) {
                     config.refresh();
                 }
+                //YTODO 注册中心的地址: 一般是zookeeper://127.0.0.1:2181
                 String address = config.getAddress();
                 if (StringUtils.isEmpty(address)) {
+                    //YTODO 如果没有指定地址的话，默认取0.0.0.0
                     address = ANYHOST_VALUE;
                 }
                 if (!RegistryConfig.NO_AVAILABLE.equalsIgnoreCase(address)) {
@@ -212,8 +215,11 @@ public class ConfigValidationUtils {
                     if (!map.containsKey(PROTOCOL_KEY)) {
                         map.put(PROTOCOL_KEY, DUBBO_PROTOCOL);
                     }
+                    //YTODO 根据address以及参数拼接url: zookeeper://127.0.0.1:2181/org.apache.dubbo.registry.
+                    // RegistryService?application=dubbo-demo-api-consumer&dubbo=2.0.2&pid=14036&timestamp=1648727621975
                     List<URL> urls = UrlUtils.parseURLs(address, map);
 
+                    //YTODO 在这里，将zookeeper协议转成register协议
                     for (URL url : urls) {
                         url = URLBuilder.from(url)
                             .addParameter(REGISTRY_KEY, url.getProtocol())

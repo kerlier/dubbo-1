@@ -86,6 +86,7 @@ public class MigrationInvoker<T> implements MigrationClusterInvoker<T> {
                             Class<T> type,
                             URL url,
                             URL consumerUrl) {
+        System.out.println("1111初始化invoker");
         this.invoker = invoker;
         this.serviceDiscoveryInvoker = serviceDiscoveryInvoker;
         this.registryProtocol = registryProtocol;
@@ -167,7 +168,7 @@ public class MigrationInvoker<T> implements MigrationClusterInvoker<T> {
     public boolean migrateToForceInterfaceInvoker(MigrationRule newRule) {
         CountDownLatch latch = new CountDownLatch(1);
         refreshInterfaceInvoker(latch);
-
+        System.out.println("migrateToForceInterfaceInvoker获取cluster执行器"  );
         if (serviceDiscoveryInvoker == null) {
             // serviceDiscoveryInvoker is absent, ignore threshold check
             this.currentAvailableInvoker = invoker;
@@ -205,6 +206,7 @@ public class MigrationInvoker<T> implements MigrationClusterInvoker<T> {
     public boolean migrateToForceApplicationInvoker(MigrationRule newRule) {
         CountDownLatch latch = new CountDownLatch(1);
         refreshServiceDiscoveryInvoker(latch);
+        System.out.println("migrateToForceApplicationInvoker获取cluster执行器"  );
 
         if (invoker == null) {
             // invoker is absent, ignore threshold check
@@ -241,6 +243,7 @@ public class MigrationInvoker<T> implements MigrationClusterInvoker<T> {
 
     @Override
     public void migrateToApplicationFirstInvoker(MigrationRule newRule) {
+        System.out.println("migrateToApplicationFirstInvoker");
         CountDownLatch latch = new CountDownLatch(0);
         refreshInterfaceInvoker(latch);
         refreshServiceDiscoveryInvoker(latch);
@@ -272,6 +275,8 @@ public class MigrationInvoker<T> implements MigrationClusterInvoker<T> {
 
     @Override
     public Result invoke(Invocation invocation) throws RpcException {
+
+        System.out.println("2222" + currentAvailableInvoker.getClass());
         if (currentAvailableInvoker != null) {
             if (step == APPLICATION_FIRST) {
                 // call ratio calculation based on random value
@@ -281,6 +286,7 @@ public class MigrationInvoker<T> implements MigrationClusterInvoker<T> {
             }
             return currentAvailableInvoker.invoke(invocation);
         }
+        System.out.println("invoke获取cluster执行器"  );
 
         switch (step) {
             case APPLICATION_FIRST:
@@ -466,6 +472,7 @@ public class MigrationInvoker<T> implements MigrationClusterInvoker<T> {
     }
 
     private synchronized void calcPreferredInvoker(MigrationRule migrationRule) {
+        System.out.println("calcPreferredInvoker执行器");
         if (serviceDiscoveryInvoker == null || invoker == null) {
             return;
         }
@@ -477,6 +484,7 @@ public class MigrationInvoker<T> implements MigrationClusterInvoker<T> {
             if (detectors.stream().allMatch(comparator -> comparator.shouldMigrate(serviceDiscoveryInvoker, invoker, migrationRule))) {
                 this.currentAvailableInvoker = serviceDiscoveryInvoker;
             } else {
+                System.out.println(invoker.getClass());
                 this.currentAvailableInvoker = invoker;
             }
         }
