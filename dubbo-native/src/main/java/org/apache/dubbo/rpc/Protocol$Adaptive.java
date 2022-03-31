@@ -17,6 +17,7 @@
 package org.apache.dubbo.rpc;
 import org.apache.dubbo.rpc.model.ScopeModel;
 import org.apache.dubbo.rpc.model.ScopeModelUtil;
+//YTODO 1.adaptive实现 原理: 就是根据Adaptive中值，然后再去getExtension("key")
 public class Protocol$Adaptive implements org.apache.dubbo.rpc.Protocol {
 public int getDefaultPort()  {
 throw new UnsupportedOperationException("The method public abstract int org.apache.dubbo.rpc.Protocol.getDefaultPort() of interface org.apache.dubbo.rpc.Protocol is not adaptive method!");
@@ -25,9 +26,12 @@ public org.apache.dubbo.rpc.Exporter export(org.apache.dubbo.rpc.Invoker arg0) t
 if (arg0 == null) throw new IllegalArgumentException("org.apache.dubbo.rpc.Invoker argument == null");
 if (arg0.getUrl() == null) throw new IllegalArgumentException("org.apache.dubbo.rpc.Invoker argument getUrl() == null");
 org.apache.dubbo.common.URL url = arg0.getUrl();
+//YTODO 2. adaptive 判断url中的protocol,
 String extName = ( url.getProtocol() == null ? "dubbo" : url.getProtocol() );
 if(extName == null) throw new IllegalStateException("Failed to get extension (org.apache.dubbo.rpc.Protocol) name from url (" + url.toString() + ") use keys([protocol])");
 ScopeModel scopeModel = ScopeModelUtil.getOrDefault(url.getScopeModel(), org.apache.dubbo.rpc.Protocol.class);
+
+//YTODO 3. adaptive 获取参数，加载目标实现类
 org.apache.dubbo.rpc.Protocol extension = (org.apache.dubbo.rpc.Protocol)scopeModel.getExtensionLoader(org.apache.dubbo.rpc.Protocol.class).getExtension(extName);
 return extension.export(arg0);
 }

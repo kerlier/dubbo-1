@@ -135,6 +135,8 @@ public class DefaultModuleDeployer extends AbstractDeployer<ModuleModel> impleme
                 return startFuture;
             }
 
+            System.out.println("开启deployer");
+
             onModuleStarting();
 
             // initialize

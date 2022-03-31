@@ -212,6 +212,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
 
         if (ref == null) {
             // ensure start module, compatible with old api usage
+            //YTODO 0.一个消费者，就会创建一个deployer
             getScopeModel().getDeployer().start();
 
             synchronized (this) {
@@ -246,10 +247,12 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
         }
     }
 
+    //YTODO 1 消费者初始化本地引用
     protected synchronized void init() {
         if (initialized) {
             return;
         }
+        System.out.println("初始化ref");
         initialized = true;
 
         if (!this.isRefreshed()) {
@@ -282,6 +285,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
 
         serviceMetadata.getAttachments().putAll(referenceParameters);
 
+        //YTODO 2. createProxy 使用动态代理创建ref对象，ref是主要的调用方
         ref = createProxy(referenceParameters);
 
         serviceMetadata.setTarget(ref);
@@ -381,6 +385,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
 
     @SuppressWarnings({"unchecked"})
     private T createProxy(Map<String, String> referenceParameters) {
+        //YTODO 3. createProxy 判断shouldJvmRefer，是否是jvm内部引用
         if (shouldJvmRefer(referenceParameters)) {
             createInvokerForLocal(referenceParameters);
         } else {
@@ -409,7 +414,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
         consumerUrl = consumerUrl.setServiceModel(consumerModel);
         MetadataUtils.publishServiceDefinition(consumerUrl, consumerModel.getServiceModel(), getApplicationModel());
 
-        // create service proxy
+        //YTODO  8.将创建好的invoker放到代理对象中
         return (T) proxyFactory.getProxy(invoker, ProtocolUtils.isGeneric(generic));
     }
 
@@ -419,6 +424,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
      * @param referenceParameters
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
+    //YTODO  5. 创建内部ref,需要把拦截器放入到invoker中
     private void createInvokerForLocal(Map<String, String> referenceParameters) {
         URL url = new ServiceConfigURL(LOCAL_PROTOCOL, LOCALHOST_VALUE, 0, interfaceClass.getName(), referenceParameters);
         url = url.setScopeModel(getScopeModel());
@@ -488,9 +494,13 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
      * Make a remote reference, create a remote reference invoker
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
+    //YTODO 6. 创建外部ref 同时添加执行器链, 根据注册地址获取invoder
     private void createInvokerForRemote() {
         if (urls.size() == 1) {
             URL curUrl = urls.get(0);
+            //YTODO 7. 根据协议的SPI获取invoker
+            System.out.println(curUrl.getProtocol());
+            System.out.println(curUrl.getScopeModel());
             invoker = protocolSPI.refer(interfaceClass, curUrl);
             if (!UrlUtils.isRegistry(curUrl)) {
                 List<Invoker<?>> invokers = new ArrayList<>();
@@ -511,13 +521,16 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
                 }
             }
 
+            //YTODO 有注册协议的url
             if (registryUrl != null) {
                 // registry url is available
                 // for multi-subscription scenario, use 'zone-aware' policy by default
                 String cluster = registryUrl.getParameter(CLUSTER_KEY, ZoneAwareCluster.NAME);
                 // The invoker wrap sequence would be: ZoneAwareClusterInvoker(StaticDirectory) -> FailoverClusterInvoker
                 // (RegistryDirectory, routing happens here) -> Invoker
-                invoker = Cluster.getCluster(registryUrl.getScopeModel(), cluster, false).join(new StaticDirectory(registryUrl, invokers), false);
+                //YTODO 将invoker加入到集群
+                invoker = Cluster.getCluster(registryUrl.getScopeModel(), cluster, false)
+                    .join(new StaticDirectory(registryUrl, invokers), false);
             } else {
                 // not a registry url, must be direct invoke.
                 if (CollectionUtils.isEmpty(invokers)) {
@@ -615,6 +628,7 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
     protected boolean shouldJvmRefer(Map<String, String> map) {
         URL tmpUrl = new ServiceConfigURL("temp", "localhost", 0, map);
         boolean isJvmRefer;
+        //YTODO 4. 当referenceConfig中的inJvm属性为null时，再判断url是否为空，就创建一个本地ref供消费者使用
         if (isInjvm() == null) {
             // if an url is specified, don't do local reference
             if (StringUtils.isNotEmpty(url)) {

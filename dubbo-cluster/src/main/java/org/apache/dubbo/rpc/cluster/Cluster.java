@@ -31,6 +31,8 @@ import org.apache.dubbo.rpc.model.ScopeModelUtil;
  * <a href="http://en.wikipedia.org/wiki/Fault-tolerant_system">Fault-Tolerant</a>
  *
  */
+
+//YTODO cluster: 将多个提供者伪装成一个提供方，对消费者无感知
 @SPI(Cluster.DEFAULT)
 public interface Cluster {
 

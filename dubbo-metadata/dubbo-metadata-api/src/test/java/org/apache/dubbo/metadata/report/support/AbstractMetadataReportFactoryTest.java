@@ -34,6 +34,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER_SIDE;
+
 /**
  * 2018/9/14
  */
@@ -147,4 +149,23 @@ public class AbstractMetadataReportFactoryTest {
         MetadataReport metadataReport2 = metadataReportFactory.getMetadataReport(url2);
         Assertions.assertNotEquals(metadataReport1, metadataReport2);
     }
+
+
+    @Test
+    public void testPutConsumer(){
+
+        //先获取zookeeper的metadataReport类
+        URL url1 = URL.valueOf("zookeeper://" + NetUtils.getLocalAddress().getHostName() + ":4444/org.apache.dubbo.TestService?version=1.0.0&application=vic&group=aaa");
+
+
+//        metadataReport.storeProviderMetadata(
+//            new MetadataIdentifier(
+//                url.getServiceInterface(),
+//                url.getVersion() == null ? "" : url.getVersion(),
+//                url.getGroup() == null ? "" : url.getGroup(),
+//                PROVIDER_SIDE,
+//                applicationModel.getApplicationName())
+//            , serviceDefinition);
+    }
+
 }

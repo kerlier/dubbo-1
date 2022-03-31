@@ -45,11 +45,17 @@ public class InvokerInvocationHandler implements InvocationHandler {
         this.serviceModel = this.url.getServiceModel();
     }
 
+    //YTODO 消费者调用方法，会默认调用代理对象的invoker; invoker连接:consumer://19
+    // 2.168.251.2/org.apache.dubbo.demo.DemoService?application=dubbo-demo-api-con
+    // sumer&background=false&check=false&dubbo=2.0.2&injvm=false&interface=org.apache.
+    // dubbo.demo.DemoService&methods=sayHello,sayHelloAsync&pid=6523&register.ip=192.168.251.2&release=&side=consumer&sticky=false&timestamp=1648718010023
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (method.getDeclaringClass() == Object.class) {
             return method.invoke(invoker, args);
         }
+        System.out.println(invoker.getClass());
+        System.out.println(invoker.getUrl());
         String methodName = method.getName();
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes.length == 0) {
@@ -64,6 +70,7 @@ public class InvokerInvocationHandler implements InvocationHandler {
         } else if (parameterTypes.length == 1 && "equals".equals(methodName)) {
             return invoker.equals(args[0]);
         }
+        //YTODO 消费者调用时，需要指定方法名，类型，以及参数，Dubbo做法是将这几个参数包装成RpcInvocation
         RpcInvocation rpcInvocation = new RpcInvocation(serviceModel, method, invoker.getInterface().getName(), protocolServiceKey, args);
 
         if (serviceModel instanceof ConsumerModel) {

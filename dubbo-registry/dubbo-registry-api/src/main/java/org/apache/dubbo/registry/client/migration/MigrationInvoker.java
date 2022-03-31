@@ -62,6 +62,8 @@ public class MigrationInvoker<T> implements MigrationClusterInvoker<T> {
 
     private volatile ClusterInvoker<T> invoker;
     private volatile ClusterInvoker<T> serviceDiscoveryInvoker;
+
+    //YTODO 集群中可用的执行器
     private volatile ClusterInvoker<T> currentAvailableInvoker;
     private volatile MigrationStep step;
     private volatile MigrationRule rule;

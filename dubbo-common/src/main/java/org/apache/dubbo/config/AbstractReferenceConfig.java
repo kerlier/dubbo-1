@@ -172,6 +172,7 @@ public abstract class AbstractReferenceConfig extends AbstractInterfaceConfig {
      */
     @Deprecated
     public void setInjvm(Boolean injvm) {
+        System.out.println("修改injvm值:" + injvm);
         this.injvm = injvm;
     }
 

@@ -17,22 +17,21 @@
 package org.apache.dubbo.demo.consumer;
 
 import org.apache.dubbo.common.constants.CommonConstants;
-import org.apache.dubbo.config.ApplicationConfig;
-import org.apache.dubbo.config.MetadataReportConfig;
-import org.apache.dubbo.config.ProtocolConfig;
-import org.apache.dubbo.config.ReferenceConfig;
-import org.apache.dubbo.config.RegistryConfig;
+import org.apache.dubbo.config.*;
 import org.apache.dubbo.config.bootstrap.DubboBootstrap;
 import org.apache.dubbo.demo.DemoService;
 import org.apache.dubbo.rpc.service.GenericService;
 
+import java.util.concurrent.CountDownLatch;
+
 public class Application {
-    public static void main(String[] args) {
-        if (isClassic(args)) {
-            runWithRefer();
-        } else {
-            runWithBootstrap();
-        }
+    public static void main(String[] args) throws InterruptedException {
+        runWithRefer();
+//        if (isClassic(args)) {
+//
+//        } else {
+//            runWithBootstrap();
+//        }
     }
 
     private static boolean isClassic(String[] args) {
@@ -62,14 +61,34 @@ public class Application {
         System.out.println(genericInvokeResult);
     }
 
-    private static void runWithRefer() {
+    private static void runWithRefer() throws InterruptedException {
+        ApplicationConfig applicationConfig = new ApplicationConfig("dubbo-demo-api-consumer");
+
+//        ServiceConfig<ConsumerServiceImpl> service = new ServiceConfig<>();
+//        service.setInterface(DemoService.class);
+//        service.setRef(new ConsumerServiceImpl());
+//
+//        service.setApplication(applicationConfig);
+//        service.setRegistry(new RegistryConfig("zookeeper://127.0.0.1:2181"));
+//        service.setMetadataReportConfig(new MetadataReportConfig("zookeeper://127.0.0.1:2181"));
+//        service.export();
+
+
         ReferenceConfig<DemoService> reference = new ReferenceConfig<>();
-        reference.setApplication(new ApplicationConfig("dubbo-demo-api-consumer"));
+        reference.setCheck(false);
+        reference.setInjvm(false);
+        reference.setApplication(applicationConfig);
         reference.setRegistry(new RegistryConfig("zookeeper://127.0.0.1:2181"));
         reference.setMetadataReportConfig(new MetadataReportConfig("zookeeper://127.0.0.1:2181"));
         reference.setInterface(DemoService.class);
-        DemoService service = reference.get();
-        String message = service.sayHello("dubbo");
+        DemoService service1 = reference.get();
+
+        String message = service1.sayHello("dubbo");
         System.out.println(message);
+
+
+
+        new CountDownLatch(1).await();
+
     }
 }

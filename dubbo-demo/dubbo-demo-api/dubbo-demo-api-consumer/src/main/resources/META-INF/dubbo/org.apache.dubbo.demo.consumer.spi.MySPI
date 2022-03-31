@@ -1,0 +1,2 @@
+A=org.apache.dubbo.demo.consumer.spi.MyASPI
+B=org.apache.dubbo.demo.consumer.spi.MyBSPI
