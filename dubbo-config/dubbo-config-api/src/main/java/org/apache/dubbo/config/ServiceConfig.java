@@ -16,6 +16,7 @@
  */
 package org.apache.dubbo.config;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.URLBuilder;
 import org.apache.dubbo.common.Version;
@@ -207,6 +208,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         serviceMetadata.generateServiceKey();
     }
 
+    //YTODO  暴露流程1:  调用serviceConfig的export
     @Override
     public void export() {
         if (this.exported) {
@@ -363,6 +365,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
+    //YTODO 暴露流程2: 这里调用doExportUrls。暴露服务提供者信息
     private void doExportUrls() {
         ModuleServiceRepository repository = getScopeModel().getServiceRepository();
         ServiceDescriptor serviceDescriptor;
@@ -575,6 +578,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
 
             // export to remote if the config is not local (export to local only when config is local)
             if (!SCOPE_LOCAL.equalsIgnoreCase(scope)) {
+                //YTODO 暴露流程3: exportRemote 暴露远程链接
                 url = exportRemote(url, registryURLs);
                 if (!isGeneric(generic) && !getScopeModel().isInternal()) {
                     MetadataUtils.publishServiceDefinition(url, providerModel.getServiceModel(), getApplicationModel());
@@ -638,6 +642,8 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         if (withMetaData) {
             invoker = new DelegateProviderMetaDataInvoker(invoker, this);
         }
+
+        //YTODO 暴露流程5: 获取Exporter暴露器
         Exporter<?> exporter = protocolSPI.export(invoker);
         exporters.add(exporter);
     }
@@ -679,6 +685,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
     }
 
     protected void onExported() {
+        System.out.println("当前exported的监听器: "+ JSONObject.toJSONString(this.serviceListeners));
         for (ServiceListener serviceListener : this.serviceListeners) {
             serviceListener.exported(this);
         }

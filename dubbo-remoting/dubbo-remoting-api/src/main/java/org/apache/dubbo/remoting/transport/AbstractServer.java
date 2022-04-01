@@ -64,6 +64,7 @@ public abstract class AbstractServer extends AbstractEndpoint implements Remotin
         bindAddress = new InetSocketAddress(bindIp, bindPort);
         this.accepts = url.getParameter(ACCEPTS_KEY, DEFAULT_ACCEPTS);
         try {
+            System.out.println("AbstractServer  开启nettyServer");
             doOpen();
             if (logger.isInfoEnabled()) {
                 logger.info("Start " + getClass().getSimpleName() + " bind " + getBindAddress() + ", export " + getLocalAddress());

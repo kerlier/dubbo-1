@@ -32,6 +32,8 @@ public class NettyTransporter implements Transporter {
 
     @Override
     public RemotingServer bind(URL url, ChannelHandler handler) throws RemotingException {
+        System.out.println("netty启动的server: " + url);
+        //YTODO 暴露过程10: 创建nettyServer: 暴露的地址为提供者+ 20880端口， 这个nettyServer直接与调用方通信
         return new NettyServer(url, handler);
     }
 

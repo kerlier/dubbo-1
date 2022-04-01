@@ -57,12 +57,22 @@ public class Application {
 
     private static void startWithExport() throws InterruptedException {
         ServiceConfig<DemoServiceImpl> service = new ServiceConfig<>();
+        ApplicationConfig applicationConfig = new ApplicationConfig("dubbo-demo-api-provider1");
         service.setInterface(DemoService.class);
         service.setRef(new DemoServiceImpl());
-        service.setApplication(new ApplicationConfig("dubbo-demo-api-provider"));
+        service.setApplication(applicationConfig);
         service.setRegistry(new RegistryConfig("zookeeper://127.0.0.1:2181"));
         service.setMetadataReportConfig(new MetadataReportConfig("zookeeper://127.0.0.1:2181"));
         service.export();
+
+        ServiceConfig<DemoServiceImpl> service1 = new ServiceConfig<>();
+        service1.setInterface(DemoService.class);
+        service1.setRef(new DemoServiceImpl());
+        service1.setApplication(applicationConfig);
+        service1.setRegistry(new RegistryConfig("zookeeper://127.0.0.1:2181"));
+        service1.setMetadataReportConfig(new MetadataReportConfig("zookeeper://127.0.0.1:2181"));
+        service1.export();
+
 
         System.out.println("dubbo service started");
         new CountDownLatch(1).await();

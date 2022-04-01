@@ -306,6 +306,8 @@ public class DubboProtocol extends AbstractProtocol {
         return DEFAULT_PORT;
     }
 
+
+    //YTODO 暴露流程6: 通过dubboProtocol协议，这里调用openServer,判断stub
     @Override
     public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException {
         checkDestroyed();
@@ -336,10 +338,21 @@ public class DubboProtocol extends AbstractProtocol {
     }
 
     private void openServer(URL url) {
+        //YTODO 暴露流程: 创建具体的server
+
+        //YTODO 注册时，dubbo://192.168.251.2:20880/org.apache.dubbo.demo.DemoService?
+        // anyhost=true&application=dubbo-demo-api-provider&background=false&
+        // bind.ip=192.168.251.2&bind.port=20880&deprecated=false&dubbo=2.0.2&
+        // dynamic=true&generic=false&interface=org.apache.dubbo.demo.DemoService&methods=sayHello,
+        // sayHelloAsync&pid=3198&release=&service-name-mapping=true&side=provider&timestamp=1648775529997
+        System.out.println("openServer: " + url.toString());
         checkDestroyed();
         // find server.
+
+        //YTODO 暴露过程9: 根据服务端提供的url，获取服务端的主机,ip。
+        // 一个主机只开启一个server,去与zookeeper进行交流
         String key = url.getAddress();
-        // client can export a service which only for server to invoke
+        System.out.println("注册时的key: "+ key);
         boolean isServer = url.getParameter(IS_SERVER_KEY, true);
         if (isServer) {
             ProtocolServer server = serverMap.get(key);
@@ -370,6 +383,7 @@ public class DubboProtocol extends AbstractProtocol {
                 // send readonly event when server closes, it's enabled by default
                 .addParameterIfAbsent(CHANNEL_READONLYEVENT_SENT_KEY, Boolean.TRUE.toString())
                 // enable heartbeat by default
+               // YTODO 默认打开心跳
                 .addParameterIfAbsent(HEARTBEAT_KEY, String.valueOf(DEFAULT_HEARTBEAT))
                 .addParameter(CODEC_KEY, DubboCodec.NAME)
                 .build();
@@ -381,6 +395,7 @@ public class DubboProtocol extends AbstractProtocol {
 
         ExchangeServer server;
         try {
+            //YTODO 暴露流程8: Exchanger获取server
             server = Exchangers.bind(url, requestHandler);
         } catch (RemotingException e) {
             throw new RpcException("Fail to start server(url: " + url + ") " + e.getMessage(), e);

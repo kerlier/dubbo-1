@@ -98,7 +98,10 @@ public class NettyServer extends AbstractServer {
     protected void doOpen() throws Throwable {
         bootstrap = new ServerBootstrap();
 
+
+        //YTODO 暴露流程11: 创建bossGroup
         bossGroup = createBossGroup();
+        //YTODO 暴露流程12：创建workerGroup
         workerGroup = createWorkerGroup();
 
         final NettyServerHandler nettyServerHandler = createNettyServerHandler();
@@ -108,6 +111,7 @@ public class NettyServer extends AbstractServer {
 
         // bind
         ChannelFuture channelFuture = bootstrap.bind(getBindAddress());
+        System.out.println("netty4444当前启动类:" + bootstrap.hashCode());
         channelFuture.syncUninterruptibly();
         channel = channelFuture.channel();
 
@@ -130,6 +134,7 @@ public class NettyServer extends AbstractServer {
     protected void initServerBootstrap(NettyServerHandler nettyServerHandler) {
         boolean keepalive = getUrl().getParameter(KEEP_ALIVE_KEY, Boolean.FALSE);
 
+        //YTODO 暴露流程13: 创建boostrap
         bootstrap.group(bossGroup, workerGroup)
                 .channel(NettyEventLoopFactory.serverSocketChannelClass())
                 .option(ChannelOption.SO_REUSEADDR, Boolean.TRUE)
@@ -148,6 +153,7 @@ public class NettyServer extends AbstractServer {
                         ch.pipeline()
                                 .addLast("decoder", adapter.getDecoder())
                                 .addLast("encoder", adapter.getEncoder())
+                            //YTODO 暴露流程14: 添加心跳时间
                                 .addLast("server-idle-handler", new IdleStateHandler(0, 0, idleTimeout, MILLISECONDS))
                                 .addLast("handler", nettyServerHandler);
                     }
