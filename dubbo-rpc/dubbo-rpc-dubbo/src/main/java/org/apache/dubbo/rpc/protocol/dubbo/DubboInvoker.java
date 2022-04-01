@@ -91,6 +91,7 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
         inv.setAttachment(PATH_KEY, getUrl().getPath());
         inv.setAttachment(VERSION_KEY, version);
 
+        //YTODO dubbo中都使用exchange来进行交换数据
         ExchangeClient currentClient;
         if (clients.length == 1) {
             currentClient = clients[0];
@@ -98,21 +99,30 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
             currentClient = clients[index.getAndIncrement() % clients.length];
         }
         try {
+            //YTODO dubbo真实调用的地方
             boolean isOneway = RpcUtils.isOneway(getUrl(), invocation);
             int timeout = calculateTimeout(invocation, methodName);
             invocation.setAttachment(TIMEOUT_KEY, timeout);
+
+            //YTODO 如果是oneWay方法，也就是发送一次
             if (isOneway) {
                 boolean isSent = getUrl().getMethodParameter(methodName, Constants.SENT_KEY, false);
                 currentClient.send(inv, isSent);
                 return AsyncRpcResult.newDefaultAsyncResult(invocation);
             } else {
+                //YTODO 消费端计算超时错误
                 ExecutorService executor = getCallbackExecutor(getUrl(), inv);
+                //YTODO 获取执行的completableFuture，并将结果转成appResponse
                 CompletableFuture<AppResponse> appResponseFuture =
-                        currentClient.request(inv, timeout, executor).thenApply(obj -> (AppResponse) obj);
+                        currentClient
+                            .request(inv, timeout, executor)
+                            .thenApply(obj -> (AppResponse) obj);
+
                 // save for 2.6.x compatibility, for example, TraceFilter in Zipkin uses com.alibaba.xxx.FutureAdapter
                 FutureContext.getContext().setCompatibleFuture(appResponseFuture);
                 AsyncRpcResult result = new AsyncRpcResult(appResponseFuture, inv);
                 result.setExecutor(executor);
+                //YTODO 返回一个rpcResult, 这里不知道是异步，还是非异步
                 return result;
             }
         } catch (TimeoutException e) {

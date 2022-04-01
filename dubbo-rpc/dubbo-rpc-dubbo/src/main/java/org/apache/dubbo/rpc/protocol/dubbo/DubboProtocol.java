@@ -449,8 +449,10 @@ public class DubboProtocol extends AbstractProtocol {
         }
     }
 
+    //YTODO protocolRef 这里会调用DubboProtocol
     @Override
     public <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException {
+        System.out.println("执行dubboProtocol");
         checkDestroyed();
         return protocolBindingRefer(type, url);
     }
@@ -467,8 +469,18 @@ public class DubboProtocol extends AbstractProtocol {
         return invoker;
     }
 
+    //YTODO 在dubboProtocol协议，创建exchangeClient exchangeClient来执行远程调用
     private ExchangeClient[] getClients(URL url) {
         // whether to share connection
+
+        //YTODO 这里的url是dubbo://192.168.10.140:20880/org.apache.dubbo.demo.DemoService?
+        // anyhost=true&application=dubbo-demo-api-provider
+        // 1&background=false&category=providers,configurators,routers&
+        // check=false&deprecated=false&dubbo=2.0.2&dynamic=true&
+        // generic=false&injvm=false&interface=org.apache.dubbo.demo.DemoService&
+        // methods=sayHello,sayHelloAsync&pid=15428&release=release&service-name-mapping=true&side=provider&sticky=false
+        System.out.println("根据url创建exchangeClient:" + url);
+        //YTODO 根据服务提供者的网址来创建对应的client
 
         boolean useShareConnect = false;
 
@@ -508,6 +520,7 @@ public class DubboProtocol extends AbstractProtocol {
      */
     @SuppressWarnings("unchecked")
     private List<ReferenceCountExchangeClient> getSharedClient(URL url, int connectNum) {
+        //YTODO dubboProtol使用 referenceClientMap 来保存 提供者与连接的关系
         String key = url.getAddress();
 
         Object clients = referenceClientMap.get(key);
@@ -679,6 +692,8 @@ public class DubboProtocol extends AbstractProtocol {
             if (url.getParameter(LAZY_CONNECT_KEY, false)) {
                 client = new LazyConnectExchangeClient(url, requestHandler);
             } else {
+                //YTODO 创建Exchanger连接
+                System.out.println("连接地址: " + url);
                 client = Exchangers.connect(url, requestHandler);
             }
 

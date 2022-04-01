@@ -71,7 +71,9 @@ public class ProtocolFilterWrapper implements Protocol {
             return protocol.refer(type, url);
         }
         FilterChainBuilder builder = getFilterChainBuilder(url);
-        return builder.buildInvokerChain(protocol.refer(type, url), REFERENCE_FILTER_KEY, CommonConstants.CONSUMER);
+        Invoker<T> tInvoker = builder.buildInvokerChain(protocol.refer(type, url), REFERENCE_FILTER_KEY, CommonConstants.CONSUMER);
+        System.out.println("filterWrapper中的类: "+ tInvoker.getClass());
+        return tInvoker;
     }
 
     @Override

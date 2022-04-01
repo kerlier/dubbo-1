@@ -90,6 +90,7 @@ public class MockClusterInvoker<T> implements ClusterInvoker<T> {
     @Override
     public Result invoke(Invocation invocation) throws RpcException {
         Result result;
+        System.out.println("执行MockClusterInvoker");
 
         String value = getUrl().getMethodParameter(invocation.getMethodName(), MOCK_KEY, Boolean.FALSE.toString()).trim();
         if (ConfigUtils.isEmpty(value)) {

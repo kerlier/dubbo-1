@@ -182,6 +182,7 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
         AsyncRpcResult asyncResult = doInvokeAndReturn(invocation);
 
         // wait rpc result if sync
+        //YTODO 在abstractInvoker 判断是同步请求，如果是的话，就等待
         waitForResultIfSync(asyncResult, invocation);
 
         return asyncResult;
@@ -259,6 +260,7 @@ public abstract class AbstractInvoker<T> implements Invoker<T> {
              * must call {@link java.util.concurrent.CompletableFuture#get(long, TimeUnit)} because
              * {@link java.util.concurrent.CompletableFuture#get()} was proved to have serious performance drop.
              */
+            //YTODO 获取invocation中的超时请求
             Object timeout = invocation.getObjectAttachment(TIMEOUT_KEY);
             if (timeout instanceof Integer) {
                 asyncResult.get((Integer) timeout, TimeUnit.MILLISECONDS);

@@ -502,9 +502,9 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
             //YTODO 7. 根据协议的SPI获取invoker
             System.out.println(curUrl.getProtocol());
             System.out.println(curUrl.getScopeModel());
-            System.out.println(protocolSPI.getClass());
-            System.out.println("curUrl:" + curUrl);
+            System.out.println("使用protocal加载的类:" + protocolSPI.getClass() +", 当前使用的协议:" + curUrl.getProtocol());
             //YTODO 8. 根据默认的协议，去指定的注册url,加载invoker
+            //YTODO refer流程，先找到registerProtocol -> MigrationRuleListener ->
             invoker = protocolSPI.refer(interfaceClass, curUrl);
             System.out.println("invoker: " + invoker.getClass());
 

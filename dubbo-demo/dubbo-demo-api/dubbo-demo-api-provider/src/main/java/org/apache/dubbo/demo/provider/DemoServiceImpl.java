@@ -29,12 +29,19 @@ public class DemoServiceImpl implements DemoService {
 
     @Override
     public String sayHello(String name) {
+        try{
+            Thread.sleep(12000);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         logger.info("Hello " + name + ", request from consumer: " + RpcContext.getServiceContext().getRemoteAddress());
         return "Hello " + name + ", response from provider: " + RpcContext.getServiceContext().getLocalAddress();
     }
 
     @Override
     public CompletableFuture<String> sayHelloAsync(String name) {
+
         return null;
     }
 

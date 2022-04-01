@@ -75,6 +75,8 @@ public class ProtocolListenerWrapper implements Protocol {
         }
 
         Invoker<T> invoker = protocol.refer(type, url);
+        //YTODO 这里是DubboInvoker
+        System.out.println("ProtolListenerWrapper可用的类: "+ invoker.getClass());
         if (StringUtils.isEmpty(url.getParameter(REGISTRY_CLUSTER_TYPE_KEY))) {
             invoker = new ListenerInvokerWrapper<>(invoker,
                     Collections.unmodifiableList(

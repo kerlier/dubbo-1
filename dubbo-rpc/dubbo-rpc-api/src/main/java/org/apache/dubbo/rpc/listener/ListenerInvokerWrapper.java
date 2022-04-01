@@ -44,6 +44,7 @@ public class ListenerInvokerWrapper<T> implements Invoker<T> {
             throw new IllegalArgumentException("invoker == null");
         }
         this.invoker = invoker;
+        //YTODO ListenerInvokerWrapper维护了invoker的声明周期，就是创建以及销毁
         this.listeners = listeners;
         if (CollectionUtils.isNotEmpty(listeners)) {
             for (InvokerListener listener : listeners) {

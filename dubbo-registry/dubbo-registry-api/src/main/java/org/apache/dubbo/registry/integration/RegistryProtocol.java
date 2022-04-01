@@ -469,6 +469,7 @@ public class RegistryProtocol implements Protocol, ScopeModelAware {
     @SuppressWarnings("unchecked")
     public <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException {
         url = getRegistryUrl(url);
+        System.out.println("执行RegistryProtocol");
         //YTODO url: 提供者对应的注册中心地址
         Registry registry = getRegistry(url);
         if (RegistryService.class.equals(type)) {
@@ -530,11 +531,13 @@ public class RegistryProtocol implements Protocol, ScopeModelAware {
     protected <T> Invoker<T> interceptInvoker(ClusterInvoker<T> invoker, URL url, URL consumerUrl) {
         List<RegistryProtocolListener> listeners = findRegistryProtocolListeners(url);
         if (CollectionUtils.isEmpty(listeners)) {
+            System.out.println("执行的监听器为空 ");
             return invoker;
         }
 
         //YTODO 判断监听器是否存在，有的话，对invoker执行监听器的操作
         for (RegistryProtocolListener listener : listeners) {
+            System.out.println("执行的监听器: " + listener.getClass());
             listener.onRefer(this, invoker, consumerUrl, url);
         }
         return invoker;
@@ -570,8 +573,11 @@ public class RegistryProtocol implements Protocol, ScopeModelAware {
             registry.register(directory.getRegisteredConsumerUrl());
         }
         directory.buildRouterChain(urlToRegistry);
-        directory.subscribe(toSubscribeUrl(urlToRegistry));
+        //YTODO 订阅连接: consumer://192.168.10.140/org.apache.dubbo.demo.DemoService
+        URL url = toSubscribeUrl(urlToRegistry);
 
+        directory.subscribe(url);
+        //YTODO 调用集群 . cluster 默认使用的failOverCluster. 这里默认就使用SPI,调用failOverCluster
         return (ClusterInvoker<T>) cluster.join(directory, true);
     }
 

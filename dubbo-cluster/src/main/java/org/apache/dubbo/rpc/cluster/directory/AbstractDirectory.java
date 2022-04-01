@@ -177,6 +177,7 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
         setRouterChain(routerChain);
     }
 
+    //YTODO 抽象注册中心:
     @Override
     public List<Invoker<T>> list(Invocation invocation) throws RpcException {
         if (destroyed) {
@@ -189,6 +190,11 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
             availableInvokers = validInvokers.clone();
         } else {
             availableInvokers = invokers.clone();
+        }
+        for (Invoker<T> availableInvoker : availableInvokers) {
+
+            //YTODO 注册中心的invoker就已经是listenerInvokerWrapper
+            System.out.println("可用的invoker:" + availableInvoker.getClass());
         }
 
         List<Invoker<T>> routedResult = doList(availableInvokers, invocation);

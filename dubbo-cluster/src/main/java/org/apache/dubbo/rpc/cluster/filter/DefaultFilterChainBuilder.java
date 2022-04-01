@@ -42,7 +42,9 @@ public class DefaultFilterChainBuilder implements FilterChainBuilder {
      */
     @Override
     public <T> Invoker<T> buildInvokerChain(final Invoker<T> originalInvoker, String key, String group) {
+        //YTODO 包装filter类，
         Invoker<T> last = originalInvoker;
+        System.out.println("包装前:" + last.getClass());
         URL url = originalInvoker.getUrl();
         List<ModuleModel> moduleModels = getModuleModelsFromUrl(url);
         List<Filter> filters;
@@ -72,6 +74,7 @@ public class DefaultFilterChainBuilder implements FilterChainBuilder {
             return new CallbackRegistrationInvoker<>(last, filters);
         }
 
+        System.out.println("包装后:" + last.getClass());
         return last;
     }
 

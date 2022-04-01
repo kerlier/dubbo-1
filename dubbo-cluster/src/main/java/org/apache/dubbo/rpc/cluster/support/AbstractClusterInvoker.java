@@ -330,6 +330,9 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
 
         InvocationProfilerUtils.enterDetailProfiler(invocation, () -> "Router route.");
         List<Invoker<T>> invokers = list(invocation);
+        for (Invoker<T> invoker : invokers) {
+            System.out.println("打印从directory中获取的invoker:" + invoker.getClass());
+        }
         InvocationProfilerUtils.releaseDetailProfiler(invocation);
 
         LoadBalance loadbalance = initLoadBalance(invokers, invocation);

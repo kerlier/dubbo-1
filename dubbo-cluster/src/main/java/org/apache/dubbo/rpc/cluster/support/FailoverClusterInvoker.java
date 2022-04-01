@@ -80,6 +80,8 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
             RpcContext.getServiceContext().setInvokers((List) invoked);
             boolean success = false;
             try {
+                System.out.println("真实请求的invoker: " + invoker.getClass());
+                //YTODO 真实请求在这里
                 Result result = invokeWithContext(invoker, invocation);
                 if (le != null && logger.isWarnEnabled()) {
                     logger.warn("Although retry the method " + methodName

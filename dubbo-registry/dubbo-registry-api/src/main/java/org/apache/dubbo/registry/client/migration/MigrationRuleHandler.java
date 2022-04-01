@@ -60,6 +60,7 @@ public class MigrationRuleHandler<T> {
         }
     }
 
+    //YTODO migrationRuleHandler调用migrateToApplicationFirstInvoker
     private boolean refreshInvoker(MigrationStep step, Float threshold, MigrationRule newRule) {
         if (step == null || threshold == null) {
             throw new IllegalStateException("Step or threshold of migration rule cannot be null");

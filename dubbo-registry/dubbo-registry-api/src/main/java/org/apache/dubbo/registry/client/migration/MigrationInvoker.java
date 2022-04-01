@@ -240,6 +240,7 @@ public class MigrationInvoker<T> implements MigrationClusterInvoker<T> {
         return false;
     }
 
+    //YTODO 调用migrationInvoker方法中的refreshInterfaceInvoker
     @Override
     public void migrateToApplicationFirstInvoker(MigrationRule newRule) {
         System.out.println("migrateToApplicationFirstInvoker");

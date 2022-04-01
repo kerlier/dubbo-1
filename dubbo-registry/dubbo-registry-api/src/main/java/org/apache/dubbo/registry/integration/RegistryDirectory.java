@@ -126,6 +126,7 @@ public class RegistryDirectory<T> extends DynamicDirectory<T> {
 
     @Override
     public synchronized void notify(List<URL> urls) {
+        System.out.println("RegistryDirectory:执行这里xxxxxxxxxxxx");
         if (isDestroyed()) {
             return;
         }
@@ -175,7 +176,11 @@ public class RegistryDirectory<T> extends DynamicDirectory<T> {
     // RefreshOverrideAndInvoker will be executed by registryCenter and configCenter, so it should be synchronized.
     private synchronized void refreshOverrideAndInvoker(List<URL> urls) {
         // mock zookeeper://xxx?mock=return null
+        System.out.println(Thread.currentThread().getName()+"执行refreshOverrideAndInvoker");
+        //YTODO registryDirectory进行加载DubboProrotol,并启动nettyClient
         refreshInvoker(urls);
+
+        System.out.println("执行refreshOverrideAndInvokerVVVVVVVVVVVVV");
     }
 
     /**
