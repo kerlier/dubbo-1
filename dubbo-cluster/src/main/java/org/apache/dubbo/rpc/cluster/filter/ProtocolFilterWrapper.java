@@ -67,12 +67,17 @@ public class ProtocolFilterWrapper implements Protocol {
 
     @Override
     public <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException {
+        System.out.println("执行ProtocoFilterWrapper refer");
         if (UrlUtils.isRegistry(url)) {
-            return protocol.refer(type, url);
+            Invoker<T> refer = protocol.refer(type, url);
+            System.out.println("执行ProtocoFilterWrapper refer 中的类" + refer.getClass());
+            return refer;
         }
         FilterChainBuilder builder = getFilterChainBuilder(url);
-        Invoker<T> tInvoker = builder.buildInvokerChain(protocol.refer(type, url), REFERENCE_FILTER_KEY, CommonConstants.CONSUMER);
-        System.out.println("filterWrapper中的类: "+ tInvoker.getClass());
+        //YTODO protocolFilterWrapper根据url加载不同的protocol，来生成具体的invoker
+        //YTODO 在protocolFilterWrapper中，已经将当前的url改为了dubbo，所以这里调用dubboProtocol
+        Invoker<T> refer = protocol.refer(type, url);
+        Invoker<T> tInvoker = builder.buildInvokerChain(refer, REFERENCE_FILTER_KEY, CommonConstants.CONSUMER);
         return tInvoker;
     }
 

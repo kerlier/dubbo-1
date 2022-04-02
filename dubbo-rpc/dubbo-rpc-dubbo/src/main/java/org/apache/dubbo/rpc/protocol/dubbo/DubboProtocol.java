@@ -462,6 +462,7 @@ public class DubboProtocol extends AbstractProtocol {
         checkDestroyed();
         optimizeSerialization(url);
 
+        //YTODO dubboProtocol创建url的client
         // create rpc invoker.
         DubboInvoker<T> invoker = new DubboInvoker<T>(serviceType, url, getClients(url), invokers);
         invokers.add(invoker);

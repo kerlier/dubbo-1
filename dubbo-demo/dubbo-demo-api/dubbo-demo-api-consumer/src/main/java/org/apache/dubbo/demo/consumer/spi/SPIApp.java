@@ -19,18 +19,21 @@ public class SPIApp {
     public static void main(String[] args) {
         MySPI adaptiveExtension = ExtensionLoader.getExtensionLoader(MySPI.class).getAdaptiveExtension();
         adaptiveExtension.sayHello(URL.valueOf("http://localhst:8080"));
-//        adaptiveExtension.sayHello(URL.valueOf("http://localhst:8080?A=A"));
-        System.out.println(adaptiveExtension.getClass());
 
-        MyInnerUrlSPI adaptiveExtension1 = ExtensionLoader.getExtensionLoader(MyInnerUrlSPI.class).getAdaptiveExtension();
-        InnerURL innerURL = new InnerURL();
-        innerURL.setUrl(URL.valueOf("http://localhst:8080?name=b"));
-        adaptiveExtension1.sayHello(innerURL);
-
-        List<Filter> activateExtensions = ExtensionLoader.getExtensionLoader(Filter.class).getActivateExtensions();
-        for (Filter activateExtension : activateExtensions) {
-            System.out.println(activateExtension.getClass());
-        }
+//        MySPI adaptiveExtension = ExtensionLoader.getExtensionLoader(MySPI.class).getAdaptiveExtension();
+//        adaptiveExtension.sayHello(URL.valueOf("http://localhst:8080"));
+////        adaptiveExtension.sayHello(URL.valueOf("http://localhst:8080?A=A"));
+//        System.out.println(adaptiveExtension.getClass());
+//
+//        MyInnerUrlSPI adaptiveExtension1 = ExtensionLoader.getExtensionLoader(MyInnerUrlSPI.class).getAdaptiveExtension();
+//        InnerURL innerURL = new InnerURL();
+//        innerURL.setUrl(URL.valueOf("http://localhst:8080?name=b"));
+//        adaptiveExtension1.sayHello(innerURL);
+//
+//        List<Filter> activateExtensions = ExtensionLoader.getExtensionLoader(Filter.class).getActivateExtensions();
+//        for (Filter activateExtension : activateExtensions) {
+//            System.out.println(activateExtension.getClass());
+//        }
 
 //        adaptiveExtension2.invoke(new Invoker<String>() {
 //            @Override

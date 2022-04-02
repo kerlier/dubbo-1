@@ -222,7 +222,8 @@ public class ReferenceKeyTest {
         private HelloService helloServiceWithArray2;
 
         // Instance 3
-        @DubboReference(check = false, parameters = {"a", "1", "b", "2"}, filter = {"echo"}, methods = {@Method(parameters = {"d", "2", "c", "1"}, name = "sayHello", timeout = 100)})
+        @DubboReference(check = false, parameters = {"a", "1", "b", "2"}, filter = {"echo"}, methods =
+            {@Method(parameters = {"d", "2", "c", "1"}, name = "sayHello", timeout = 100)})
         private HelloService helloServiceWithMethod1;
 
         @DubboReference(parameters = {"b=2", "a=1"}, filter = {"echo"}, check = false, methods = {@Method(name = "sayHello", timeout = 100, parameters = {"c", "1", "d", "2"})})

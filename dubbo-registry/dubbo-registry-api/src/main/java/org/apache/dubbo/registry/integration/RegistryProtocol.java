@@ -485,6 +485,8 @@ public class RegistryProtocol implements Protocol, ScopeModelAware {
             }
         }
 
+
+
         //YTODO registryProtocol 默认使用failover作为clusteInvoker执行器, 也就是生成集群执行器
         Cluster cluster = Cluster.getCluster(url.getScopeModel(), qs.get(CLUSTER_KEY));
         return doRefer(cluster, registry, type, url, qs);
@@ -504,7 +506,9 @@ public class RegistryProtocol implements Protocol, ScopeModelAware {
             consumerAttribute
         );
         url = url.putAttribute(CONSUMER_URL_KEY, consumerUrl);
+        //YTODO  创建migrationInvoker
         ClusterInvoker<T> migrationInvoker = getMigrationInvoker(this, cluster, registry, type, url, consumerUrl);
+        System.out.println("执行RegistryProtocol refer");
         return interceptInvoker(migrationInvoker, url, consumerUrl);
     }
 

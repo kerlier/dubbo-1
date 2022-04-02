@@ -46,6 +46,7 @@ public class AdaptiveExtensionInjector implements ExtensionInjector, Lifecycle {
 
     @Override
     public void initialize() throws IllegalStateException {
+        //YTODO IOC具体的实现
         ExtensionLoader<ExtensionInjector> loader = extensionAccessor.getExtensionLoader(ExtensionInjector.class);
         List<ExtensionInjector> list = new ArrayList<ExtensionInjector>();
         for (String name : loader.getSupportedExtensions()) {

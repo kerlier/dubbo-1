@@ -748,6 +748,8 @@ public class ExtensionLoader<T> {
     }
 
     @SuppressWarnings("unchecked")
+    //YTODO dubboSPI默认会实现IOC以及AOP
+    //YTODO 并不是Spring所独有的，任何框架都可以实现自己的IOC以及AOP
     private T createExtension(String name, boolean wrap) {
         Class<?> clazz = getExtensionClasses().get(name);
         if (clazz == null || unacceptableExceptions.contains(name)) {
@@ -763,10 +765,13 @@ public class ExtensionLoader<T> {
                 instance = postProcessAfterInitialization(instance, name);
             }
 
+
+            //YTODO 获取SPI时，进行AOP代理
             if (wrap) {
                 List<Class<?>> wrapperClassesList = new ArrayList<>();
                 if (cachedWrapperClasses != null) {
                     wrapperClassesList.addAll(cachedWrapperClasses);
+                    //YTODO 将wrapper根据注解中的order排序， 数字越小，级别越高
                     wrapperClassesList.sort(WrapperComparator.COMPARATOR);
                     Collections.reverse(wrapperClassesList);
                 }
@@ -778,6 +783,8 @@ public class ExtensionLoader<T> {
                             ((ArrayUtils.isEmpty(wrapper.matches()) || ArrayUtils.contains(wrapper.matches(), name)) &&
                                 !ArrayUtils.contains(wrapper.mismatches(), name));
                         if (match) {
+                            //YTODO 将wrapper类加入到其中，将本来的instance包装到里面。 并再次调用injectExtension
+                            //YTODO wrapper类中很可能还有IOC引用
                             instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance));
                             instance = postProcessAfterInitialization(instance, name);
                         }
@@ -876,6 +883,7 @@ public class ExtensionLoader<T> {
      * return "", if setter name with length less than 3
      */
     private String getSetterProperty(Method method) {
+        //YTODO 获取类中的属性,比如说 setName  -> name
         return method.getName().length() > 3 ? method.getName().substring(3, 4).toLowerCase() + method.getName().substring(4) : "";
     }
 
@@ -1109,6 +1117,7 @@ public class ExtensionLoader<T> {
         if (clazz.isAnnotationPresent(Adaptive.class)) {
             cacheAdaptiveClass(clazz, overridden);
         } else if (isWrapperClass(clazz)) {
+            //YTODO type是我们一开始的SPI类, 我们需要判断当前是否是wrapperClass是否有对type的复制构造方法
             cacheWrapperClass(clazz);
         } else {
             if (StringUtils.isEmpty(name)) {

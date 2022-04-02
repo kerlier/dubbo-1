@@ -49,6 +49,7 @@ public class ProtocolSerializationWrapper implements Protocol {
 
     @Override
     public <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException {
+        System.out.println("执行这里-----");
         return protocol.refer(type, url);
     }
 

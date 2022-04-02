@@ -70,12 +70,14 @@ public class ProtocolListenerWrapper implements Protocol {
 
     @Override
     public <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException {
+        System.out.println("执行ProtocolListenerWrapper refer");
         if (UrlUtils.isRegistry(url)) {
-            return protocol.refer(type, url);
+            Invoker<T> refer = protocol.refer(type, url);
+            System.out.println("执行ProtocolListenerWrapper refer 中的类" + refer.getClass());
+            return refer;
         }
-
         Invoker<T> invoker = protocol.refer(type, url);
-        //YTODO 这里是DubboInvoker
+        //YTODO ProtocolFilterWrapper创建出来的是 dubboInvoker, 然后ProtocolListenerWrapper又进行包装，包装成ListenerInvokerWrapper
         System.out.println("ProtolListenerWrapper可用的类: "+ invoker.getClass());
         if (StringUtils.isEmpty(url.getParameter(REGISTRY_CLUSTER_TYPE_KEY))) {
             invoker = new ListenerInvokerWrapper<>(invoker,

@@ -47,6 +47,10 @@ import java.util.concurrent.TimeUnit;
 import static org.apache.dubbo.registry.client.migration.model.MigrationStep.APPLICATION_FIRST;
 import static org.apache.dubbo.rpc.cluster.Constants.REFER_KEY;
 
+
+//YTODO migretionInvoker的作用:
+//   里面有一个可用集群选择器-> currentAvailableInvoker
+//
 public class MigrationInvoker<T> implements MigrationClusterInvoker<T> {
     private Logger logger = LoggerFactory.getLogger(MigrationInvoker.class);
 
@@ -85,9 +89,10 @@ public class MigrationInvoker<T> implements MigrationClusterInvoker<T> {
                             Class<T> type,
                             URL url,
                             URL consumerUrl) {
-        System.out.println("1111初始化invoker");
+        System.out.println(this.getClass() + " 1111初始化invoker");
         this.invoker = invoker;
         this.serviceDiscoveryInvoker = serviceDiscoveryInvoker;
+        System.out.println(this.getClass() + "当前的serviceDiscoveryInvoker" + serviceDiscoveryInvoker);
         this.registryProtocol = registryProtocol;
         this.cluster = cluster;
         this.registry = registry;
@@ -472,7 +477,7 @@ public class MigrationInvoker<T> implements MigrationClusterInvoker<T> {
     }
 
     private synchronized void calcPreferredInvoker(MigrationRule migrationRule) {
-        System.out.println("calcPreferredInvoker执行器");
+        System.out.println(this.getClass()+ "====" + "calcPreferredInvoker执行器");
         if (serviceDiscoveryInvoker == null || invoker == null) {
             return;
         }
@@ -481,10 +486,12 @@ public class MigrationInvoker<T> implements MigrationClusterInvoker<T> {
         if (CollectionUtils.isNotEmpty(detectors)) {
             // pick preferred invoker
             // the real invoker choice in invocation will be affected by promotion
-            if (detectors.stream().allMatch(comparator -> comparator.shouldMigrate(serviceDiscoveryInvoker, invoker, migrationRule))) {
+            if (detectors.stream().allMatch(comparator ->
+                comparator.shouldMigrate(serviceDiscoveryInvoker, invoker, migrationRule))) {
+                System.out.println(this.getClass()+ "====" +"设置可用的集群invoker");
                 this.currentAvailableInvoker = serviceDiscoveryInvoker;
             } else {
-                System.out.println(invoker.getClass());
+                System.out.println(this.getClass()+ "====" +invoker.getClass());
                 this.currentAvailableInvoker = invoker;
             }
         }

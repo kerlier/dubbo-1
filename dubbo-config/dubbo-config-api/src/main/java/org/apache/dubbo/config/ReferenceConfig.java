@@ -504,7 +504,14 @@ public class ReferenceConfig<T> extends ReferenceConfigBase<T> {
             System.out.println(curUrl.getScopeModel());
             System.out.println("使用protocal加载的类:" + protocolSPI.getClass() +", 当前使用的协议:" + curUrl.getProtocol());
             //YTODO 8. 根据默认的协议，去指定的注册url,加载invoker
-            //YTODO refer流程，先找到registerProtocol -> MigrationRuleListener ->
+            //YTODO 这里获取protocol，会进行wrapper包装 执行 ProtocolFilterWrapper(100)
+            //  ProtocolListenerWrapper(200) 数字越小，谁就先执行
+            //  ProtocolFilterWrapper 加上过滤器链 ，ProtocolListenerWrapper 加入生命周期的类
+            //YTODO refer流程，先找到registerProtocol ->创建migrationInvokder(可以理解成对clusterInvokder的包装)->
+            // MigrationRuleListener调用migrationInvoker中的migrateToApplicationFirstInvoker方法
+            //      ->  migrationInvoker又会去调用registerProtocol的getInvoker方法(这一步将clusterInvoker设置到migrationInvoker中,这里是从注册中心获取invoker)
+            //      ->  并同时设置监听器
+            // protoclFilterWrapper执行dubboportocol
             invoker = protocolSPI.refer(interfaceClass, curUrl);
             System.out.println("invoker: " + invoker.getClass());
 

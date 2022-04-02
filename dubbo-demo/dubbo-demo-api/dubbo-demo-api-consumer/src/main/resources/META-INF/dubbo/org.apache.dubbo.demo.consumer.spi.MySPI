@@ -1,2 +1,4 @@
 A=org.apache.dubbo.demo.consumer.spi.MyASPI
 B=org.apache.dubbo.demo.consumer.spi.MyBSPI
+wrapper=org.apache.dubbo.demo.consumer.spi.MySPIWrapper
+wrapperB=org.apache.dubbo.demo.consumer.spi.MySPIBWrapper
